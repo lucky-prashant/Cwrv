@@ -1,43 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CWRV-123 Predictor</title>
-  <style>
-    body { font-family: Arial, sans-serif; text-align: center; }
-    .pair-box { display:inline-block; border:1px solid #ccc; margin:10px; padding:10px; width:200px; }
-    .high { color:green; font-weight:bold; }
-    .low { color:red; font-weight:bold; }
-  </style>
-</head>
-<body>
-  <h2>CWRV-123 Next Candle Prediction</h2>
-  <button onclick="analyze()">Analyze</button>
-  <div id="results"></div>
-  <br>
-  <a href="/check_data" target="_blank">Check raw data retrieval (debug)</a>
-
-  <script>
-    async function analyze(){
-      document.getElementById("results").innerHTML = "Analyzing...";
-      let res = await fetch("/analyze");
-      let data = await res.json();
-      let html = "";
-      for (let pair in data){
-        let r = data[pair];
-        if(r.error){
-          html += `<div class="pair-box"><h3>${pair}</h3><p>Error: ${r.error}</p></div>`;
-        } else {
-          html += `<div class="pair-box">
-            <h3>${pair}</h3>
-            <p>Prediction: <b>${r.prediction}</b></p>
-            <p>Confidence: <span class="${r.confidence=='High'?'high':'low'}">${r.confidence}</span></p>
-            <p>Reason: ${r.reason}</p>
-            <small>Last Candle: O:${r.last_candle.o} C:${r.last_candle.c}</small>
-          </div>`;
+    <title>CWRV Predictor</title>
+    <script>
+        async function analyze() {
+            document.getElementById("btn").innerText = "Analyzing...";
+            let res = await fetch("/analyze");
+            let data = await res.json();
+            let div = document.getElementById("results");
+            div.innerHTML = "";
+            for (let pair in data) {
+                let r = data[pair];
+                if (r.error) {
+                    div.innerHTML += `<div><h3>${pair}</h3><p>${r.error}</p></div>`;
+                    continue;
+                }
+                div.innerHTML += `
+                <div style="border:1px solid #ccc;padding:10px;margin:5px;display:inline-block;width:200px;">
+                    <h3>${pair}</h3>
+                    <p>Prediction: <b>${r.prediction}</b></p>
+                    <p>Confidence: ${r.confidence}</p>
+                    <p>Accuracy: ${r.accuracy}%</p>
+                    <p>Reason: ${r.reason}</p>
+                    <small>Last Candle: O:${r.last_candle["o"]} C:${r.last_candle["c"]}</small>
+                </div>`;
+            }
+            document.getElementById("btn").innerText = "Analyze";
         }
-      }
-      document.getElementById("results").innerHTML = html;
-    }
-  </script>
+    </script>
+</head>
+<body style="font-family:Arial;">
+    <h1>CWRV 123 Web App</h1>
+    <button id="btn" onclick="analyze()">Analyze</button>
+    <div id="results"></div>
 </body>
 </html>
