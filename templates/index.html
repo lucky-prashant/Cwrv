@@ -1,46 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CWRV Predictor</title>
-    <style>
-        body { font-family: Arial; margin: 20px; }
-        .pair-box { display: inline-block; width: 18%; border: 1px solid #ccc; margin: 5px; padding: 10px; vertical-align: top; }
-        .signal { font-size: 20px; font-weight: bold; }
-        .call { color: green; }
-        .put { color: red; }
-        .footer { margin-top: 20px; font-size: 12px; }
-    </style>
+  <title>CWRV-123 Predictor</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    .pair-box { display:inline-block; border:1px solid #ccc; margin:10px; padding:10px; width:200px; }
+    .high { color:green; font-weight:bold; }
+    .low { color:red; font-weight:bold; }
+  </style>
 </head>
 <body>
-    <h1>CWRV 5-Pair Predictor</h1>
-    <button onclick="analyze()">Analyze</button>
-    <div id="results"></div>
-    <div class="footer">
-        <a href="/debug" target="_blank">Check raw data (debug)</a>
-    </div>
+  <h2>CWRV-123 Next Candle Prediction</h2>
+  <button onclick="analyze()">Analyze</button>
+  <div id="results"></div>
+  <br>
+  <a href="/check_data" target="_blank">Check raw data retrieval (debug)</a>
 
-<script>
-function analyze(){
-    document.getElementById("results").innerHTML = "Analyzing...";
-    fetch('/analyze').then(r=>r.json()).then(res => {
-        let html = "";
-        for (let p in res){
-            let r = res[p];
-            let cls = r.signal === "CALL" ? "call" : "put";
-            html += `<div class="pair-box">
-                        <h3>${p}</h3>
-                        <div class="signal ${cls}">${r.signal}</div>
-                        <div>Reason: ${r.reason}</div>
-                        <div>Accuracy: ${r.accuracy}%</div>
-                        <div>Confidence: ${r.confidence}%</div>
-                        <div style="font-size:12px;margin-top:5px;">Last Candle: O=${r.last ? r.last.o : "?"}, C=${r.last ? r.last.c : "?"}</div>
-                    </div>`;
+  <script>
+    async function analyze(){
+      document.getElementById("results").innerHTML = "Analyzing...";
+      let res = await fetch("/analyze");
+      let data = await res.json();
+      let html = "";
+      for (let pair in data){
+        let r = data[pair];
+        if(r.error){
+          html += `<div class="pair-box"><h3>${pair}</h3><p>Error: ${r.error}</p></div>`;
+        } else {
+          html += `<div class="pair-box">
+            <h3>${pair}</h3>
+            <p>Prediction: <b>${r.prediction}</b></p>
+            <p>Confidence: <span class="${r.confidence=='High'?'high':'low'}">${r.confidence}</span></p>
+            <p>Reason: ${r.reason}</p>
+            <small>Last Candle: O:${r.last_candle.o} C:${r.last_candle.c}</small>
+          </div>`;
         }
-        document.getElementById("results").innerHTML = html;
-    }).catch(err => {
-        document.getElementById("results").innerHTML = "Error: " + err;
-    });
-}
-</script>
+      }
+      document.getElementById("results").innerHTML = html;
+    }
+  </script>
 </body>
 </html>
