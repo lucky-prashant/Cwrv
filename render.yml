@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: cwrv-web-app
+    name: cwrv123-predictor
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: python app.py
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
