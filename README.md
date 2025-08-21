@@ -1,17 +1,16 @@
-# CWRV Web App
 
-Flask-based web app to predict next 5-min candle for 5 pairs using CWRV logic with Twelve Data API.
+# CWRV Next-Candle ML — All in Code (Render-ready)
 
-## Setup (Local)
-```bash
+- Twelve Data API key is **embedded** in code. No environment variables needed.
+- On Analyze: fetch candles, train LogisticRegression per pair, predict next candle.
+- Robust exception handling + heuristic fallback.
+- Educational/demo only (not financial advice).
+
+## Run
 pip install -r requirements.txt
-export TWELVE_DATA_API_KEY=your_api_key   # or set in Windows PowerShell
 python app.py
-```
-Go to `http://localhost:5000`.
+Open http://localhost:5000
 
-## Render Deployment
-- Push to GitHub
-- Connect repo to Render
-- Add environment variable: `TWELVE_DATA_API_KEY`
-- Deploy!
+## Render
+Build: pip install -r requirements.txt
+Start: python app.py

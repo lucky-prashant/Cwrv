@@ -1,37 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>CWRV Predictor</title>
-    <script>
-        async function analyze() {
-            document.getElementById("btn").innerText = "Analyzing...";
-            let res = await fetch("/analyze");
-            let data = await res.json();
-            let div = document.getElementById("results");
-            div.innerHTML = "";
-            for (let pair in data) {
-                let r = data[pair];
-                if (r.error) {
-                    div.innerHTML += `<div><h3>${pair}</h3><p>${r.error}</p></div>`;
-                    continue;
-                }
-                div.innerHTML += `
-                <div style="border:1px solid #ccc;padding:10px;margin:5px;display:inline-block;width:200px;">
-                    <h3>${pair}</h3>
-                    <p>Prediction: <b>${r.prediction}</b></p>
-                    <p>Confidence: ${r.confidence}</p>
-                    <p>Accuracy: ${r.accuracy}%</p>
-                    <p>Reason: ${r.reason}</p>
-                    <small>Last Candle: O:${r.last_candle["o"]} C:${r.last_candle["c"]}</small>
-                </div>`;
-            }
-            document.getElementById("btn").innerText = "Analyze";
-        }
-    </script>
-</head>
-<body style="font-family:Arial;">
-    <h1>CWRV 123 Web App</h1>
-    <button id="btn" onclick="analyze()">Analyze</button>
-    <div id="results"></div>
-</body>
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>CWRV Next-Candle ML (Embedded)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/css/style.css">
+  </head>
+  <body>
+    <div class="container">
+      <h1>CWRV Next-Candle ML</h1>
+      <p class="note">Embedded Twelve Data key. Click Analyze to train+predict per pair with full exception handling.</p>
+      <button id="analyzeBtn">Analyze</button>
+      <div id="status"></div>
+      <div id="results" class="grid"></div>
+    </div>
+    <script src="/static/js/app.js"></script>
+  </body>
 </html>
